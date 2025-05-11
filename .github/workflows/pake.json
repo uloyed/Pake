@@ -1,0 +1,10 @@
+{
+  "url": "https://www.gaotu.cn/pc-exercise-tool/",
+  "name": "GaotuExercise",
+  "width": 1200,
+  "height": 800,
+  "user_data_dir": "./user_data",
+  "inject": ["inject.js"],
+  "transparent": false,
+  "resizable": true
+}
