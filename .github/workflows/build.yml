@@ -48,8 +48,11 @@ jobs:
         pnpm install
         pnpm run build
 
-    - name: 上传成品
-      uses: actions/upload-artifact@v3
+    - name: Upload Application
+      uses: actions/upload-artifact@v4
       with:
-        name: GaotuExercise
-        path: target/release/GaotuExercise
+      name: GaotuExercise
+      path: |
+        target/release/GaotuExercise*
+        user_data/
+      retention-days: 7
