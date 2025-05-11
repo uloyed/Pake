@@ -1,0 +1,55 @@
+name: 网页打包高途刷题
+
+on:
+  workflow_dispatch: # 启用手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 安装环境
+      run: |
+        npm install -g pnpm
+        curl https://sh.rustup.rs -sSf | sh -s -- -y
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+    - name: 创建配置文件
+      run: |
+        # 自动生成 inject.js
+        echo "// 自动登录脚本
+        localStorage.hasSavedLogin = true;
+        window.location.href = 'https://www.gaotu.cn/pc-exercise-tool/#/home';" > inject.js
+
+        # 生成 pake.json
+        echo '{
+          "url": "https://www.gaotu.cn/pc-exercise-tool/",
+          "name": "GaotuExercise",
+          "width": 1200,
+          "height": 800,
+          "user_data_dir": "./user_data",
+          "inject": ["inject.js"]
+        }' > pake.json
+
+        # 生成 package.json
+        echo '{
+          "scripts": {
+            "build": "pake build --config pake.json"
+          },
+          "dependencies": {
+            "pake-cli": "^2.0.0"
+          }
+        }' > package.json
+
+    - name: 执行打包
+      run: |
+        pnpm install
+        pnpm run build
+
+    - name: 上传成品
+      uses: actions/upload-artifact@v3
+      with:
+        name: GaotuExercise
+        path: target/release/GaotuExercise
