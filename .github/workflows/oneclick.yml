@@ -1,0 +1,28 @@
+name: 一键打包高途刷题
+
+on:
+  workflow_dispatch: # 启用手动触发按钮
+
+jobs:
+  build:
+    runs-on: windows-latest # 仅生成Windows版
+    steps:
+    - name: 下载代码
+      uses: actions/checkout@v4
+
+    - name: 安装环境
+      run: |
+        npm install -g pnpm
+        curl -sSf -L https://win.rustup.rs | sh -s -- -y
+        
+    - name: 打包应用
+      run: |
+        pnpm install
+        pnpm run build --url https://www.gaotu.cn/pc-exercise-tool/ \
+          --name GaotuExercise \
+          --width 1200 \
+          --height 800
+        
+    - name: 生成下载链接
+      run: |
+        echo "立即下载 ➔ https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
